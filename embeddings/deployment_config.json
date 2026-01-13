@@ -1,0 +1,13 @@
+{
+  "total_chunks": 1757,
+  "embedding_model": "OpenAI",
+  "collection_name": "zimbabwe_tax_law_v3",
+  "storage_path": "C:\\Users\\User\\Documents\\MyApps\\Flask\\taxcul_ai_backend\\knowledge_base\\embeddings",
+  "created_at": "Tue Jan 13 14:44:46 2026",
+  "total_tokens": 603408,
+  "estimated_cost": 0.0784,
+  "chunks_count": 1757,
+  "avg_tokens_per_chunk": 343,
+  "max_tokens_in_chunk": 500,
+  "min_tokens_in_chunk": 38
+}
