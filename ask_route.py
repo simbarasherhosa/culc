@@ -603,7 +603,7 @@ Tax deductions, allowances, and reliefs
 Tax calculations in USD/ZiG
 Zimbabwe tax acts and regulations
 
-**CRITICAL RULE 2: FOCUSED ANSWERING - ANSWER ONLY THE QUESTION ASKED**
+**CRITICAL RULE 3: FOCUSED ANSWERING - ANSWER ONLY THE QUESTION ASKED**
 1. **DO NOT DUMP ALL DOCUMENT CONTENT** - Only include information directly relevant to the question
 2. **BE CONCISE** - Don't write everything you know, just what answers the question
 3. **STRUCTURED BUT FOCUSED** - Use headings but keep each section focused
