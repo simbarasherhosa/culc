@@ -540,10 +540,6 @@ class EliteProfessionalTaxAssistant:
                     print("🔍 [DEBUG] Checking for 'NO LATEX' rule in prompt...")
                     print(f"🔍 [DEBUG] Rule found: {'NO LATEX FORMATTING' in system_prompt}")
 
-                legal_basis_data = self.extract_precise_legal_basis(docs_with_scores=5, question=question)
-                legal_basis_context = self.format_legal_basis_for_response(legal_basis_data, question)
-                enhanced_context += f"\n\nLEGAL BASIS CONTEXT:\n{legal_basis_context}"
-                user_prompt += f"\n\nUse this precise legal basis in your LEGAL BASIS section. Do not invent or paraphrase section content.\n{legal_basis_context}"
                 response = client.chat.completions.create(
                     model=model,
                     messages=[
@@ -563,8 +559,8 @@ class EliteProfessionalTaxAssistant:
             except Exception as e:
                 print(f"❌ Elite model {model} failed: {e}")
                 continue
-        
-        return "Fallback response", None
+
+        return "The system is facing heavy traffic, please try again later", None
 
     def _create_elite_system_prompt(self, query_analysis, response_type):
         """Create elite system prompt with specialized modes"""
