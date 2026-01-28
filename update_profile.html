@@ -1,0 +1,203 @@
+{% extends "base.html" %} {% block title %}Update Profile | LastBit{% endblock
+%} {% block content %}
+<div class="dashboard-container p-4">
+  <!-- Header -->
+  <div class="header-card">
+    <div class="d-flex justify-content-between align-items-start flex-wrap">
+      <div class="d-flex align-items-center">
+        <div class="profile-icon"><i class="fas fa-user fa-lg"></i></div>
+        <div>
+          <h1 class="mb-1">Update Your Profile</h1>
+          <p class="mb-0 opacity-75">{{ current_user.email }}</p>
+        </div>
+      </div>
+      <div class="d-flex gap-2 mt-3 mt-md-0">
+        <a href="{{ url_for('logout') }}" class="btn btn-light btn-modern"
+          ><i class="fas fa-sign-out-alt me-1"></i> Logout</a
+        >
+
+        <a
+          href="{{ url_for('seeker_dashboard') }}"
+          class="btn btn-light btn-modern"
+          ><i class="fas fa-arrow-left me-1"></i> Dashboard</a
+        >
+
+        <a
+          href="{{ url_for('upload_resume') }}"
+          class="btn btn-light btn-modern"
+          ><i class="fas fa-file-upload me-1"></i> Upload Resume</a
+        >
+      </div>
+    </div>
+  </div>
+  <!-- Form Section -->
+  <div class="form-card">
+    <form method="POST" id="profileForm">
+      {{ form.hidden_tag() }}
+
+      <!-- Basic Information Section -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <i class="fas fa-info-circle"></i>Edit Your Information
+        </h3>
+
+        <div class="row">
+          <div class="col-md-6 pt-3">
+            <div class="form-group">
+              {{ form.full_name.label(class="form-label required-field") }}
+              <div class="position-relative">
+                {{ form.full_name(class="form-control", placeholder="Full name")
+                }}
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 pt-3">
+            <div class="form-group">
+              <label class="form-label" for="email">Email</label>
+              <div class="position-relative">
+                <input
+                  class="form-control"
+                  type="email"
+                  name="email"
+                  id="email"
+                  value="{{user.email}}"
+                  placeholder="you@example.com"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Job Details Section -->
+      <div class="form-section">
+        <div class="row">
+          <div class="col-md-6 pt-3">
+            <div class="form-group pt-3">
+              {{ form.bio.label(class="form-label required-field") }}
+              <div class="position-relative">
+                {{ form.bio(class="form-control", rows="6",
+                placeholder="Describe yourself, responsibilities...",
+                id="bioInput") }}
+              </div>
+
+              <div style="visibility: hidden" class="character-count">
+                <span id="charCount">0</span> characters
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 pt-3">
+            <div class="form-group pt-3">
+              <label for="skillsInput" class="form-label"
+                >Enter Skills (comma separated)</label
+              >
+              <input
+                type="text"
+                id="skillsInput"
+                name="skills"
+                class="form-control"
+                placeholder="e.g. Skill A, Skill B, Skill C"
+                value="{{ skills_string }}"
+              />
+              <small class="text-muted"
+                >You can type skills or select from the dropdown below.</small
+              >
+            </div>
+
+            <div class="form-group mt-2">
+              <label class="form-label">Select Skills from List</label>
+              <select id="skillsDropdown" class="form-select">
+                <option value="">-- Select a skill --</option>
+                <option value="Python">Python</option>
+                <option value="JavaScript">JavaScript</option>
+                <option value="SQL">SQL</option>
+                <option value="Flask">Flask</option>
+                <option value="Django">Django</option>
+                <option value="React">React</option>
+                <option value="Machine Learning">Machine Learning</option>
+                <option value="Data Analysis">Data Analysis</option>
+                <!-- Add more skills as needed -->
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6 pt-3">
+            <div class="form-group">
+              {{ form.experience_years.label(class="form-label required-field")
+              }}
+              <div class="position-relative">
+                {{ form.experience_years(class="form-control", placeholder="e.g.
+                1.5 means 1 year 5 months") }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="text-center pt-3">
+        <button type="submit" class="btn btn-primary-modern btn-modern px-5">
+          <i class="fas fa-plus me-2"></i>{{ form.submit.label.text }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  // Character count for bio
+  const bioInput = document.getElementById("bioInput");
+  const charCount = document.getElementById("charCount");
+
+  if (bioInput) {
+    bioInput.addEventListener("input", function () {
+      charCount.textContent = this.value.length;
+    });
+  }
+
+  charCount.textContent = bioInput.value.length;
+
+  const form = document.getElementById("profileForm");
+  if (form) {
+    form.addEventListener("submit", function () {
+      const submitBtn = this.querySelector('button[type="submit"]');
+      submitBtn.innerHTML =
+        '<i class="fas fa-spinner fa-spin me-2"></i>Creating Profile...';
+      submitBtn.disabled = true;
+    });
+  }
+
+  // Add focus effects to form controls
+  const formControls = document.querySelectorAll(".form-control, .form-select");
+  formControls.forEach((control) => {
+    control.addEventListener("focus", function () {
+      this.parentElement.classList.add("focused");
+    });
+
+    control.addEventListener("blur", function () {
+      this.parentElement.classList.remove("focused");
+    });
+  });
+
+  //   Skills
+
+  const skillsInput = document.getElementById("skillsInput");
+  const skillsDropdown = document.getElementById("skillsDropdown");
+
+  skillsDropdown.addEventListener("change", function () {
+    const selectedSkill = this.value;
+    if (selectedSkill) {
+      let currentSkills = skillsInput.value
+        .split(",")
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
+
+      if (!currentSkills.includes(selectedSkill)) {
+        currentSkills.push(selectedSkill);
+      }
+      skillsInput.value = currentSkills.join(", ");
+    }
+    this.selectedIndex = 0;
+  });
+</script>
+{% endblock %}

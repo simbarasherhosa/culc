@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LastBit | Talent Matching Platform</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#6366f1",
+              secondary: "#8b5cf6",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-gray-50 min-h-screen flex items-center justify-center">
+    <main
+      class="flex flex-col md:flex-row w-full max-w-5xl bg-white rounded-2xl shadow-xl overflow-hidden"
+    >
+      <!-- Left Side - Illustration -->
+      <div
+        class="md:w-1/2 bg-gradient-to-br from-primary to-secondary p-12 hidden md:flex flex-col justify-center items-center text-white"
+      >
+        <div class="text-center space-y-6">
+          <h1 class="text-4xl font-bold">Welcome to LastBit</h1>
+          <p class="text-lg opacity-90">
+            Connecting top talent with dream opportunities
+          </p>
+          <div class="mt-8">
+            <img
+              src="http://static.photos/workspace/640x360/42"
+              alt="Career Illustration"
+              class="rounded-lg shadow-md"
+            />
+          </div>
+          <p class="text-sm opacity-80 mt-6">
+            Not registered yet?
+            <a href="#" class="font-semibold underline">Create an account</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- Right Side - Login Form -->
+      <div class="md:w-1/2 p-12">
+        <div class="flex justify-center mb-8 md:hidden">
+          <div
+            class="w-16 h-16 bg-primary rounded-full flex items-center justify-center"
+          >
+            <i data-feather="briefcase" class="text-white w-8 h-8"></i>
+          </div>
+        </div>
+
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-2">
+          Welcome back
+        </h2>
+        <p class="text-gray-600 text-center mb-8">
+          Sign in to your LastBit account
+        </p>
+
+        <form class="space-y-6" method="POST" action="{{ url_for('login') }}">
+          <div class="space-y-1">
+            <label for="email" class="block text-sm font-medium text-gray-700"
+              >Email</label
+            >
+            <div class="relative">
+              <div
+                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              >
+                <i data-feather="mail" class="text-gray-400"></i>
+              </div>
+              <input
+                name="email"
+                type="email"
+                id="email"
+                required
+                class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition"
+                placeholder="you@example.com"
+              />
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex justify-between items-center">
+              <label
+                for="password"
+                class="block text-sm font-medium text-gray-700"
+                >Password</label
+              >
+              <a
+                href="#"
+                class="text-sm text-primary font-medium hover:underline"
+                >Forgot password?</a
+              >
+            </div>
+            <div class="relative">
+              <div
+                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              >
+                <i data-feather="lock" class="text-gray-400"></i>
+              </div>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                required
+                class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition"
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                id="togglePassword"
+              >
+                <i
+                  data-feather="eye"
+                  class="text-gray-400 hover:text-gray-600 cursor-pointer"
+                ></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center">
+            <input
+              type="checkbox"
+              id="remember"
+              class="w-4 h-4 text-primary rounded focus:ring-primary border-gray-300"
+            />
+            <label for="remember" class="ml-2 block text-sm text-gray-700"
+              >Remember me</label
+            >
+          </div>
+
+          <button
+            type="submit"
+            class="w-full bg-primary hover:bg-primary-700 text-white font-medium py-3 px-4 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          >
+            Sign In
+          </button>
+
+          <div class="relative mt-6">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-gray-300"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="px-2 bg-white text-gray-500">Or continue with</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 mt-6">
+            <button
+              type="button"
+              class="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition"
+            >
+              <i class="material-icons" style="font-size: 36px; color: red"
+                >mail</i
+              >
+              Google
+            </button>
+            <button
+              type="button"
+              class="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition"
+            >
+              <i data-feather="linkedin" style="color: blue" class="mr-2"></i>
+              LinkedIn
+            </button>
+
+            <a
+              class="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition"
+              href="{{ url_for('register') }}"
+              ><button
+                type="button"
+                class="w-full inline-flex justify-center items-center py-2 px-4 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition"
+              >
+                <i
+                  data-feather="user-plus"
+                  style="color: #6366f1"
+                  class="mr-2"
+                ></i>
+                Sign Up
+              </button></a
+            >
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <script>
+      feather.replace();
+
+      // Toggle password visibility
+      document
+        .getElementById("togglePassword")
+        .addEventListener("click", function () {
+          const password = document.getElementById("password");
+          const icon = this.querySelector("i");
+          if (password.type === "password") {
+            password.type = "text";
+            icon.setAttribute("data-feather", "eye-off");
+          } else {
+            password.type = "password";
+            icon.setAttribute("data-feather", "eye");
+          }
+          feather.replace();
+        });
+    </script>
+  </body>
+</html>

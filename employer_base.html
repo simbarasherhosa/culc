@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Employer Dashboard | LastBit{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #4361ee;
+        --secondary: #3a0ca3;
+        --success: #4cc9f0;
+        --danger: #f94144;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --light-gray: #e9ecef;
+        --gradient: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+        --border-radius: 12px;
+        --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s ease;
+      }
+
+      body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+        min-height: 100vh;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .main-content {
+        flex: 1;
+        padding: 2rem 1rem;
+      }
+
+      .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .header-card {
+        background: var(--gradient);
+        color: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(67, 97, 238, 0.3);
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .section-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: none;
+        transition: transform 0.3s ease;
+      }
+
+      .section-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .content-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: none;
+      }
+
+      .btn-modern {
+        border-radius: 50px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary-modern {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-primary-modern:hover {
+        background: var(--secondary);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+        color: white;
+      }
+
+      .btn-success-modern {
+        background: var(--success);
+        color: white;
+      }
+
+      .btn-success-modern:hover {
+        background: #3aa8d0;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(76, 201, 240, 0.4);
+        color: white;
+      }
+
+      .btn-light-modern {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        backdrop-filter: blur(10px);
+      }
+
+      .btn-light-modern:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        color: white;
+      }
+
+      .btn-outline-modern {
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        background: transparent;
+      }
+
+      .btn-outline-modern:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .btn-outline-danger {
+        border: 2px solid #e63946;
+        color: #e63946;
+        background: transparent;
+        transition: all 0.3s ease;
+      }
+
+      .btn-outline-danger:hover {
+        background: #e63946;
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .profile-icon {
+        background: rgba(255, 255, 255, 0.2);
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5 {
+        font-weight: 700;
+      }
+
+      .section-title {
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--secondary);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: #6c757d;
+      }
+
+      .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #dee2e6;
+      }
+
+      /* Flash Messages */
+      .flash-messages {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 350px;
+      }
+
+      .flash-alert {
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        margin-bottom: 10px;
+        border: none;
+        transition: all 0.3s ease;
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .flash-alert.fade-out {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+
+      .progress-bar {
+        height: 3px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 0 0 10px 10px;
+        overflow: hidden;
+        margin-top: 8px;
+      }
+
+      .progress-fill {
+        height: 100%;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 0 0 10px 10px;
+        animation: progress 5s linear forwards;
+      }
+
+      @keyframes progress {
+        from {
+          width: 100%;
+        }
+        to {
+          width: 0%;
+        }
+      }
+
+      /* Tables */
+      .jobs-table,
+      .application-table {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .jobs-table thead,
+      .application-table thead {
+        background: var(--gradient);
+        color: white;
+      }
+
+      .jobs-table th,
+      .application-table th {
+        border: none;
+        padding: 1.2rem 1rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .jobs-table td,
+      .application-table td {
+        padding: 1.5rem 1rem;
+        border-color: #f1f3f4;
+        vertical-align: middle;
+      }
+
+      .jobs-table tbody tr,
+      .application-table tbody tr {
+        transition: all 0.3s ease;
+      }
+
+      .jobs-table tbody tr:hover,
+      .application-table tbody tr:hover {
+        background-color: #f8f9ff;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(67, 97, 238, 0.1);
+      }
+
+      /* Status badges */
+      .status-badge {
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: capitalize;
+      }
+
+      .status-pending {
+        background: #fff3cd;
+        color: #856404;
+      }
+      .status-reviewed {
+        background: #cce7ff;
+        color: #004085;
+      }
+      .status-accepted {
+        background: #d1edff;
+        color: #0c5460;
+      }
+      .status-rejected {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      .status-interview {
+        background: #d1f7e7;
+        color: #0c5e42;
+      }
+      .status-Applied {
+        background-color: #e3f2fd;
+        color: #1565c0;
+      }
+      .status-Reviewing {
+        background-color: #fff3cd;
+        color: #856404;
+      }
+      .status-Offer {
+        background-color: #d4edda;
+        color: #155724;
+      }
+
+      /* Applicant cards */
+      .applicant-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        padding: 1.2rem;
+        margin-bottom: 1rem;
+        transition: var(--transition);
+      }
+
+      .applicant-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+      }
+
+      .applicant-count {
+        background: var(--success);
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .job-title {
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 1rem;
+      }
+
+      .job-location {
+        color: #6c757d;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .industry-tag {
+        display: inline-block;
+        background: #e9ecef;
+        padding: 0.3rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        margin: 0.2rem;
+      }
+
+      /* Stats cards */
+      .stats-card {
+        background: var(--gradient);
+        color: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .stats-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+
+      .stats-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+      }
+
+      .welcome-text {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.1rem;
+      }
+
+      /* Form styles */
+      .form-control,
+      .form-select {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.1);
+        transform: translateY(-1px);
+      }
+
+      .form-label {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+      }
+
+      .required-field::after {
+        content: " *";
+        color: #dc3545;
+      }
+
+      /* Footer */
+      .footer {
+        background: var(--gradient);
+        color: white;
+        padding: 2rem 0;
+        margin-top: auto;
+      }
+
+      .footer h5 {
+        color: white;
+        margin-bottom: 1rem;
+      }
+
+      .footer a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .footer a:hover {
+        color: white;
+      }
+
+      .social-links a {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        text-align: center;
+        line-height: 40px;
+        margin-right: 10px;
+        transition: all 0.3s ease;
+      }
+
+      .social-links a:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+      }
+    </style>
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div
+        class="alert alert-{{ category }} flash-alert alert-dismissible fade show"
+        role="alert"
+        data-autodismiss="true"
+      >
+        <div class="d-flex align-items-center">
+          {% if category == 'success' %}
+          <i class="fas fa-check-circle me-2"></i>
+          {% elif category == 'danger' %}
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          {% elif category == 'warning' %}
+          <i class="fas fa-exclamation-circle me-2"></i>
+          {% elif category == 'info' %}
+          <i class="fas fa-info-circle me-2"></i>
+          {% endif %}
+          <span>{{ message }}</span>
+        </div>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+          <div class="progress-fill"></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
+
+    <div class="main-content">{% block content %}{% endblock %}</div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="dashboard-container">
+        <div class="row">
+          <div class="col-md-4 mb-4">
+            <h5><i class="fas fa-building me-2"></i>LastBit Employers</h5>
+            <p>
+              Find the perfect talent for your company. Streamline your hiring
+              process with our powerful platform.
+            </p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+            </div>
+          </div>
+          <div class="col-md-2 mb-4">
+            <h5>Employer Links</h5>
+            <ul class="list-unstyled">
+              <li>
+                <a href="{{ url_for('employer_dashboard') }}">Dashboard</a>
+              </li>
+              <li><a href="{{ url_for('create_job') }}">Post a Job</a></li>
+              <li>
+                <a href="{{ url_for('employer_applications') }}"
+                  >Applications</a
+                >
+              </li>
+              <li><a href="{{ url_for('index') }}">Browse Talent</a></li>
+            </ul>
+          </div>
+          <div class="col-md-3 mb-4">
+            <h5>Resources</h5>
+            <ul class="list-unstyled">
+              <li><a href="#">Hiring Guide</a></li>
+              <li><a href="#">Candidate Screening</a></li>
+              <li><a href="#">Interview Tips</a></li>
+              <li><a href="#">Employer FAQ</a></li>
+            </ul>
+          </div>
+          <div class="col-md-3 mb-4">
+            <h5>Employer Support</h5>
+            <ul class="list-unstyled">
+              <li>
+                <i class="fas fa-envelope me-2"></i> employers@lastbitjobs.com
+              </li>
+              <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+              <li><i class="fas fa-clock me-2"></i> Mon-Fri 9AM-6PM</li>
+            </ul>
+          </div>
+        </div>
+        <hr style="border-color: rgba(255, 255, 255, 0.1)" />
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-0">
+              &copy; 2025 LastBit Job Platform. All rights reserved.
+            </p>
+          </div>
+          <div class="col-md-6 text-md-end">
+            <a href="#" class="me-3">Privacy Policy</a>
+            <a href="#" class="me-3">Terms of Service</a>
+            <a href="#">Employer Agreement</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Auto-dismiss flash messages after 5 seconds
+      document.addEventListener("DOMContentLoaded", function () {
+        const flashMessages = document.querySelectorAll(
+          '.flash-alert[data-autodismiss="true"]'
+        );
+
+        flashMessages.forEach(function (message) {
+          // Set timeout to fade out after 5 seconds
+          setTimeout(function () {
+            message.classList.add("fade-out");
+
+            // Remove from DOM after fade out animation completes
+            setTimeout(function () {
+              if (message.parentNode) {
+                message.parentNode.removeChild(message);
+              }
+            }, 300);
+          }, 5000);
+
+          // Pause dismissal when hovering over message
+          message.addEventListener("mouseenter", function () {
+            const progressFill = this.querySelector(".progress-fill");
+            if (progressFill) {
+              progressFill.style.animationPlayState = "paused";
+            }
+          });
+
+          // Resume dismissal when mouse leaves
+          message.addEventListener("mouseleave", function () {
+            const progressFill = this.querySelector(".progress-fill");
+            if (progressFill) {
+              progressFill.style.animationPlayState = "running";
+            }
+          });
+        });
+
+        // Also handle manual close button clicks
+        const closeButtons = document.querySelectorAll(
+          ".flash-alert .btn-close"
+        );
+        closeButtons.forEach(function (button) {
+          button.addEventListener("click", function () {
+            const alert = this.closest(".flash-alert");
+            if (alert) {
+              alert.classList.add("fade-out");
+              setTimeout(function () {
+                if (alert.parentNode) {
+                  alert.parentNode.removeChild(alert);
+                }
+              }, 300);
+            }
+          });
+        });
+      });
+    </script>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

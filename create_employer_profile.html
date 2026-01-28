@@ -1,0 +1,179 @@
+{% extends "base.html" %} {% block title %}Create Profile | LastBit{% endblock
+%} {% block content %}
+<div class="dashboard-container p-4">
+  <!-- Header Section -->
+  <div class="header-card">
+    <div class="d-flex justify-content-between align-items-start flex-wrap">
+      <div>
+        <h1 class="mb-2">Employer Dashboard</h1>
+        <div>
+          <h1 class="mb-1">Welcome, New User</h1>
+          <p class="mb-0 opacity-75">{{ current_user.email }}</p>
+        </div>
+      </div>
+      <div class="mt-3 mt-md-0">
+        <a
+          href="{{ url_for('logout') }}"
+          class="btn btn-light-modern btn-modern"
+        >
+          <i class="fas fa-sign-out-alt me-2"></i>Logout
+        </a>
+      </div>
+    </div>
+  </div>
+  <!-- Form Section -->
+  <div class="form-card">
+    <form method="POST" id="createEmployerProfileForm">
+      {{ form.hidden_tag() }}
+
+      <!-- Basic Information Section -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <i class="fas fa-info-circle"></i>Basic Information
+        </h3>
+
+        <div class="form-group">
+          {{ form.company_name.label(class="form-label required-field") }}
+          <div class="position-relative">
+            {{ form.company_name(class="form-control", placeholder="Full name")
+            }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          {{ form.company_email.label(class="form-label required-field") }}
+          <div class="position-relative">
+            {{ form.company_email(class="form-control", placeholder="Company
+            Email (not used for application of applicant jobs)") }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Details Section -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <i class="fas fa-contact"></i>Contact Details
+        </h3>
+        <div class="form-group pt-3">
+          {{ form.address.label(class="form-label required-field") }}
+          <div class="position-relative">
+            {{ form.address(class="form-control", rows="6", placeholder="Your
+            Full Address...", id="addressInput") }}
+          </div>
+
+          <div style="visibility: hidden" class="character-count">
+            <span id="charCount">0</span> characters
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              {{ form.phone_number.label(class="form-label required-field") }}
+              <div class="position-relative">
+                {{ form.phone_number(class="form-control", placeholder="comma
+                separated") }}
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="industryInput" class="form-label"
+                >Enter Skills (comma separated)</label
+              >
+              <input
+                type="text"
+                id="industryInput"
+                name="industry"
+                class="form-control"
+                placeholder="comma separated"
+              />
+              <small class="text-muted"
+                >You can type industry or select from the dropdown below.</small
+              >
+            </div>
+
+            <div class="form-group mt-2">
+              <label class="form-label">Select Industry from List</label>
+              <select id="industryDropdown" class="form-select">
+                <option value="">-- Select your Industry --</option>
+                <option value="Telecommunication">Telecommunication</option>
+                <option value="Fashion">Fashion</option>
+                <option value="Finance">Finance</option>
+                <option value="Media and Broadcasting">
+                  Media and Broadcasting
+                </option>
+                <option value="Health">Health</option>
+                <!-- Add more skills as needed -->
+              </select>
+              <small class="text-muted">You can select your industry</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="text-center pt-3">
+        <button type="submit" class="btn btn-primary-modern btn-modern px-5">
+          <i class="fas fa-plus me-2"></i>{{ form.submit.label.text }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{%endblock%} {% block extra_js %}
+<script>
+  // Character address for bio
+  const addressInput = document.getElementById("addressInput");
+  const charCount = document.getElementById("charCount");
+
+  if (addressInput) {
+    addressInput.addEventListener("input", function () {
+      charCount.textContent = this.value.length;
+    });
+  }
+
+  const form = document.getElementById("createEmployerProfileForm");
+  if (form) {
+    form.addEventListener("submit", function () {
+      const submitBtn = this.querySelector('button[type="submit"]');
+      submitBtn.innerHTML =
+        '<i class="fas fa-spinner fa-spin me-2"></i>Creating Profile...';
+      submitBtn.disabled = true;
+    });
+  }
+
+  // Add focus effects to form controls
+  const formControls = document.querySelectorAll(".form-control, .form-select");
+  formControls.forEach((control) => {
+    control.addEventListener("focus", function () {
+      this.parentElement.classList.add("focused");
+    });
+
+    control.addEventListener("blur", function () {
+      this.parentElement.classList.remove("focused");
+    });
+  });
+
+  //   Skills
+
+  const skillsInput = document.getElementById("industryInput");
+  const skillsDropdown = document.getElementById("industryDropdown");
+
+  industryDropdown.addEventListener("change", function () {
+    const selectedIndustry = this.value;
+    if (selectedIndustry) {
+      let currentIndustry = skillsInput.value
+        .split(",")
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
+
+      if (!currentIndustry.includes(selectedIndustry)) {
+        currentIndustry.push(selectedIndustry);
+      }
+      skillsInput.value = currentIndustry.join(", ");
+    }
+    this.selectedIndex = 0;
+  });
+</script>
+{% endblock %}

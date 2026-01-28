@@ -1,0 +1,227 @@
+{% extends "employer_base.html" %} {% block title %}Applicants for {{ job.title
+}} | LastBit{% endblock %} {% block content %}
+<div class="dashboard-container p-4">
+  <!-- Header -->
+  <div class="header-card">
+    <div class="d-flex justify-content-between align-items-center flex-wrap">
+      <div>
+        <h1 class="mb-2">Applicants for {{ job.title }}</h1>
+        <p class="welcome-text mb-0">
+          <i class="fas fa-users me-2"></i>Manage applications for your job
+          posting
+        </p>
+      </div>
+      <div class="d-flex gap-2 mt-3 mt-md-0">
+        <a
+          href="{{ url_for('job_detail', job_id=job['id']) }}"
+          class="btn btn-light-modern btn-modern"
+          ><i class="fas fa-eye me-1"></i> View Post</a
+        >
+        <a
+          href="{{ url_for('employer_dashboard') }}"
+          class="btn btn-light-modern btn-modern"
+        >
+          <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+        </a>
+        <a
+          href="{{ url_for('logout') }}"
+          class="btn btn-light-modern btn-modern"
+        >
+          <i class="fas fa-sign-out-alt me-2"></i>Logout
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Applicants List -->
+  {% if applications %}
+  <div class="row">
+    {% for app in applications %}
+    <div class="col-lg-6">
+      <div class="content-card">
+        <!-- Applicant Header -->
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div>
+            <h5>{{ app.applicant.full_name or app.applicant.user.email }}</h5>
+            <strong>Email:</strong>
+            <small>{{ app.applicant.user.email }}</small>
+          </div>
+          <span class="status-badge status-{{ app.status }}">
+            {{ app.status }}
+          </span>
+        </div>
+
+        <!-- Application Info -->
+        <p class="mb-1">
+          <i class="far fa-calendar me-1"></i>
+          Applied on {{ app.created_at.strftime('%B %d, %Y, %H:%M') }}
+        </p>
+
+        {% if app.status == 'Interview' and app.interview_date %}
+        <div class="alert alert-info py-1 mb-2">
+          <small>
+            <i class="fas fa-clock me-1"></i>
+            Interview scheduled: {{ app.interview_date.strftime('%B %d, %Y at
+            %I:%M %p') }}
+          </small>
+        </div>
+        <div class="alert alert-info py-1 mb-2">
+          <small>
+            <i class="fas fa-hand me-1"></i>
+            Interview type: {{ app.interview_type }}
+          </small>
+        </div>
+        {% endif %}
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2 flex-wrap mt-2">
+          <!-- Contact -->
+          <a
+            href="mailto:{{ app.email }}"
+            class="btn btn-outline-primary btn-sm"
+          >
+            <i class="fas fa-envelope me-1"></i> Contact
+          </a>
+
+          <!-- View CV -->
+          {% if app.cv_filename %}
+          <a
+            href="{{ url_for('uploaded_file', filename=app.cv_filename) }}"
+            class="btn btn-sm btn-outline-primary"
+            target="_blank"
+          >
+            <i class="fas fa-file-alt me-1"></i> View CV
+          </a>
+          {% else %}
+          <span class="text-muted">No CV uploaded</span>
+          {% endif %}
+
+          <!-- Reject Button -->
+          {% if app.status != 'Rejected' %}
+          <a
+            href="{{ url_for('update_application_status', app_id=app.id, status='Rejected') }}"
+            class="btn btn-outline-danger btn-sm"
+          >
+            <i class="fas fa-times me-1"></i> Reject
+          </a>
+          {% endif %}
+
+          <!-- Schedule Interview -->
+          {% if app.status != 'Interview' %}
+          <button
+            type="button"
+            class="btn btn-outline-success btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#scheduleInterviewModal{{ app.id }}"
+          >
+            <i class="fas fa-calendar-alt me-1"></i> Schedule Interview
+          </button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Interview Modal (outside card but inside loop) -->
+    <div
+      class="modal fade"
+      id="scheduleInterviewModal{{ app.id }}"
+      tabindex="-1"
+      aria-labelledby="modalLabel{{ app.id }}"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form
+            method="POST"
+            action="{{ url_for('schedule_interview', app_id=app.id) }}"
+          >
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalLabel{{ app.id }}">
+                Schedule Interview
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="interview_date{{ app.id }}" class="form-label">
+                  Date
+                </label>
+                <input
+                  type="date"
+                  class="form-control"
+                  name="interview_date"
+                  id="interview_date{{ app.id }}"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="interview_time{{ app.id }}" class="form-label">
+                  Time
+                </label>
+                <input
+                  type="time"
+                  class="form-control"
+                  name="interview_time"
+                  id="interview_time{{ app.id }}"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="interview_type{{ app.id }}" class="form-label">
+                  Interview Type
+                </label>
+                <select
+                  class="form-control"
+                  name="interview_type"
+                  id="interview_type{{ app.id }}"
+                >
+                  <option value="">-- Select interview Type --</option>
+
+                  <option value="Physical">Physical</option>
+                  <option value="Online - link will be provided in your email">
+                    Online - link will be provided in your email
+                  </option>
+                  <option value="To Be Advised">To be advised</option>
+                </select>
+                <!-- <input
+                      type="text"
+                      class="form-control"
+                      name="interview_type"
+                      id="interview_type{{ app.id }}"
+                      required
+                    /> -->
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="submit"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary">
+                Initiate Interview
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="text-center py-5">
+    <i class="fas fa-users fa-3x mb-3" style="color: #ccc"></i>
+    <h4>No applicants yet</h4>
+    <p>Once candidates apply for this job, they will appear here.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
