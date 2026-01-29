@@ -1,0 +1,107 @@
+{% extends "base.html" %} {% block title %}Registration | LastBit{% endblock %}
+{% block content %}
+<div class="dashboard-container p-4">
+  <div class="card mx-auto shadow-lg" style="max-width: 600px">
+    <div class="card-body">
+      <h3 class="card-title text-center mb-3">Create Your Account</h3>
+
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <div class="mb-4">
+        {% for category, message in messages %}
+        <div
+          class="alert alert-{{ category }} p-3 rounded-lg mb-2 
+                {% if category == 'success' %}bg-green-100 text-green-800{% endif %}
+                {% if category == 'danger' %}bg-red-100 text-red-800{% endif %}
+                {% if category == 'warning' %}bg-yellow-100 text-yellow-800{% endif %}
+                {% if category == 'info' %}bg-blue-100 text-blue-800{% endif %}"
+        >
+          {{ message }}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
+
+      <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="mb-3">
+          {{ form.role.label(class="form-label") }} {{
+          form.role(class="form-select", onchange="toggleFields()") }} {% if
+          form.role.errors %}
+          <div class="text-danger small">
+            {% for error in form.role.errors %} {{ error }} {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+
+        <div id="applicantFields" style="display: none">
+          <div class="mb-3">
+            {{ form.full_name.label(class="form-label") }} {{
+            form.full_name(class="form-control") }} {% if form.full_name.errors
+            %}
+            <div class="text-danger small">
+              {% for error in form.full_name.errors %} {{ error }} {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div id="employerFields" style="display: none">
+          <div class="mb-3">
+            {{ form.company_name.label(class="form-label") }} {{
+            form.company_name(class="form-control") }} {% if
+            form.company_name.errors %}
+            <div class="text-danger small">
+              {% for error in form.company_name.errors %} {{ error }} {% endfor
+              %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          {{ form.email.label(class="form-label") }} {{
+          form.email(class="form-control") }} {% if form.email.errors %}
+          <div class="text-danger small">
+            {% for error in form.email.errors %} {{ error }} {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.password.label(class="form-label") }} {{
+          form.password(class="form-control") }} {% if form.password.errors %}
+          <div class="text-danger small">
+            {% for error in form.password.errors %} {{ error }} {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+
+        {{ form.submit(class="btn btn-primary w-100") }}
+
+        <p class="text-center mt-3">
+          Already have an account?
+          <a href="{{ url_for('login') }}">Login here</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  function toggleFields() {
+    let role = document.getElementById("role").value;
+    document.getElementById("applicantFields").style.display =
+      role === "seeker" ? "block" : "none";
+    document.getElementById("employerFields").style.display =
+      role === "employer" ? "block" : "none";
+  }
+
+  // Run on page load to show/hide fields based on current selection
+  document.addEventListener("DOMContentLoaded", function () {
+    toggleFields();
+  });
+</script>
+{% endblock %}

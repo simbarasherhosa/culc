@@ -1,0 +1,229 @@
+{% extends "base.html" %} {% block title %}Dashboard | LastBit{% endblock %} {%
+block content %}
+<div class="dashboard-container p-4">
+  <!-- Header -->
+  <div class="header-card">
+    <div class="d-flex justify-content-between align-items-start flex-wrap">
+      <div class="d-flex align-items-center">
+        <div class="profile-icon"><i class="fas fa-user fa-lg"></i></div>
+        <div>
+          <h1 class="mb-1">Welcome, {{ profile.full_name }}</h1>
+          <p class="mb-0 opacity-75">{{ current_user.email }}</p>
+        </div>
+      </div>
+      <div class="d-flex gap-2 mt-3 mt-md-0">
+        <a href="{{ url_for('logout') }}" class="btn btn-light btn-modern"
+          ><i class="fas fa-sign-out-alt me-1"></i> Logout</a
+        >
+        <a
+          href="{{ url_for('my_applications') }}"
+          class="btn btn-light btn-modern"
+          ><i class="fas fa-briefcase me-1"></i> Applied Jobs</a
+        >
+        <a
+          href="{{ url_for('upload_resume') }}"
+          class="btn btn-light btn-modern"
+          ><i class="fas fa-file-upload me-1"></i> Upload Resume</a
+        >
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Profile Section -->
+    <div class="col-lg-4 mb-4">
+      <div class="section-card h-100">
+        <h3 class="section-title">
+          <i class="fas fa-user-circle me-2"></i>Your Profile
+          <a
+            class="text-decoration-none"
+            href="{{ url_for('update_applicant_profile', profile_id=profile.id) }}"
+            ><small style="font-size: small; align-content: end"
+              ><i class="fas fa-pen"></i> Edit</small
+            ></a
+          >
+        </h3>
+
+        <div class="mb-3">
+          <p class="mb-1"><strong>Email:</strong></p>
+          <p class="text-muted">{{ current_user.email }}</p>
+        </div>
+        <div class="mb-3">
+          <p class="mb-1"><strong>Bio:</strong></p>
+          <p class="text-muted">{{ profile.bio or 'No bio added yet' }}</p>
+        </div>
+        <div class="mb-3">
+          <p class="mb-1"><strong>Skills:</strong></p>
+          <div>
+            {% if profile.skills %} {% for skill in profile.skills.split(',') %}
+            <span class="skills-tag">{{ skill.strip() }}</span>
+            {% endfor %} {% else %}
+            <span class="text-muted">No skills yet</span>
+            {% endif %}
+          </div>
+        </div>
+        {% if profile.resume %}
+        <div class="mb-3">
+          <p class="mb-1"><strong>Resume:</strong></p>
+          <a
+            href="{{ url_for('uploaded_file', filename=profile.resume) }}"
+            target="_blank"
+            class="btn btn-success-modern btn-modern"
+            ><i class="fas fa-eye me-1"></i> View Resume</a
+          >
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-lg-8">
+      <!-- Applied Jobs -->
+      <div class="section-card">
+        <h3 class="section-title">
+          <i class="fas fa-clipboard-check me-2"></i>Applied Jobs
+        </h3>
+        {% if applied_jobs %} {% for job in applied_jobs %}
+        <div class="job-card p-3 bg-light mb-3">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h5 class="mb-1">
+                <a
+                  href="{{ url_for('job_detail', job_id=job['job_id']) }}"
+                  class="text-decoration-none"
+                  >{{ job['title'] }}</a
+                >
+              </h5>
+              <p class="text-muted mb-1">
+                <i class="fas fa-map-marker-alt me-1"></i>{{ job['location'] or
+                'Not specified' }}
+              </p>
+              <div class="mb-1">
+                <strong>Matched Skills:</strong>
+                {% for skill in job['matched_skills'] %}
+                <span class="skills-tag">{{ skill }}</span>
+                {% endfor %}
+              </div>
+              <div class="mb-1">
+                <strong>Required Skills:</strong>
+                {% for skill in job['all_skills'] %} {% if skill in
+                job['matched_skills'] %}
+                <span
+                  class="skills-tag"
+                  style="background: #4361ee; color: white"
+                  >{{ skill }}</span
+                >
+                {% else %}
+                <span class="skills-tag">{{ skill }}</span>
+                {% endif %} {% endfor %}
+              </div>
+              {% set percentage = (job['score']*100)|round(1) %} {% if
+              percentage < 40 %} {% set badge_class = 'match-low' %} {% elif
+              percentage < 70 %} {% set badge_class = 'match-medium' %} {% elif
+              percentage < 90 %} {% set badge_class = 'match-high' %} {% else %}
+              {% set badge_class = 'match-excellent' %} {% endif %}
+              <div class="mt-1">
+                <span class="match-badge {{ badge_class }}">
+                  Match: {{ percentage }}%
+                </span>
+              </div>
+
+              <p class="mb-0 mt-1">{{ job['description_snippet'] }}...</p>
+            </div>
+            <div class="d-flex flex-column align-items-end gap-2">
+              <a
+                href="{{ url_for('job_detail', job_id=job['job_id']) }}"
+                class="btn btn-primary-modern btn-modern btn-sm"
+                >View Details</a
+              >
+              <span class="badge bg-success">Applied</span>
+            </div>
+          </div>
+        </div>
+        {% endfor %} {% else %}
+        <div class="empty-state">
+          <i class="fas fa-briefcase"></i>
+          <h5>No Applications Yet</h5>
+          <p>You haven't applied to any jobs yet.</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Recommended Jobs -->
+      <div class="section-card">
+        <h3 class="section-title">
+          <i class="fas fa-lightbulb me-2"></i>Recommended Jobs
+        </h3>
+        {% if recommended_jobs %} {% for job in recommended_jobs %}
+        <div class="job-card p-3 bg-light mb-3">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h5 class="mb-1">
+                <a
+                  href="{{ url_for('job_detail', job_id=job['job_id']) }}"
+                  class="text-decoration-none"
+                  >{{ job['title'] }}</a
+                >
+              </h5>
+              <p class="text-muted mb-1">
+                <i class="fas fa-map-marker-alt me-1"></i>{{ job['location'] or
+                'Not specified' }}
+              </p>
+              <div class="mb-1">
+                <strong>Matched Skills:</strong>
+                {% for skill in job['matched_skills'] %}
+                <span class="skills-tag">{{ skill }}</span>
+                {% endfor %}
+              </div>
+              <div class="mb-1">
+                <strong>Required Skills:</strong>
+                {% for skill in job['all_skills'] %} {% if skill in
+                job['matched_skills'] %}
+                <span
+                  class="skills-tag"
+                  style="background: #4361ee; color: white"
+                  >{{ skill }}</span
+                >
+                {% else %}
+                <span class="skills-tag">{{ skill }}</span>
+                {% endif %} {% endfor %}
+              </div>
+              {% set percentage = (job['score']*100)|round(1) %} {% if
+              percentage < 40 %} {% set badge_class = 'match-low' %} {% elif
+              percentage < 70 %} {% set badge_class = 'match-medium' %} {% elif
+              percentage < 90 %} {% set badge_class = 'match-high' %} {% else %}
+              {% set badge_class = 'match-excellent' %} {% endif %}
+              <div class="mt-1">
+                <span class="match-badge {{ badge_class }}">
+                  Match: {{ percentage }}%
+                </span>
+              </div>
+
+              <p class="mb-0 mt-1">{{ job['description_snippet'] }}...</p>
+            </div>
+            <div class="d-flex flex-column align-items-end gap-2">
+              <a
+                href="{{ url_for('job_detail', job_id=job['job_id']) }}"
+                class="btn btn-primary-modern btn-modern btn-sm"
+                >View Details</a
+              >
+              <a
+                href="{{ url_for('apply_job', job_id=job['job_id']) }}"
+                class="btn btn-success-modern btn-modern btn-sm"
+                ><i class="fas fa-paper-plane me-1"></i>Apply</a
+              >
+            </div>
+          </div>
+        </div>
+        {% endfor %} {% else %}
+        <div class="empty-state">
+          <i class="fas fa-search"></i>
+          <h5>No Recommended Jobs</h5>
+          <p>No recommended jobs at this time.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
