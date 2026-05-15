@@ -253,6 +253,7 @@ def get_students():
     return jsonify([s.to_dict() for s in students]), 200
 
 @app.route('/api/v1/students', methods=['POST'])
+@jwt_required()
 @role_required(['developer', 'principal', 'teacher'])
 def create_student():
     data = request.get_json()
@@ -1963,6 +1964,7 @@ def get_teachers():
 
 
 @app.route('/api/v1/teachers', methods=['POST'])
+@jwt_required()
 @role_required(['developer', 'principal'])
 def create_teacher():
     """Create a new teacher"""
@@ -2018,6 +2020,7 @@ def get_teacher(teacher_id):
 
 
 @app.route('/api/v1/teachers/<int:teacher_id>', methods=['PUT'])
+@jwt_required()
 @role_required(['developer', 'principal'])
 def update_teacher(teacher_id):
     """Update a teacher's information"""
@@ -2057,6 +2060,7 @@ def delete_teacher(teacher_id):
 
 
 @app.route('/api/v1/teachers/<int:teacher_id>/reactivate', methods=['POST'])
+@jwt_required()
 @role_required(['developer', 'principal'])
 def reactivate_teacher(teacher_id):
     """Re-activate a teacher"""
@@ -2076,3 +2080,7 @@ def get_terms():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+
+    # if __name__ == '__main__':
+    # port = int(os.environ.get('PORT', 5001))
+    # app.run(debug=False, host='0.0.0.0', port=5001)
