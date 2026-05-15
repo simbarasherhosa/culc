@@ -353,38 +353,38 @@ def delete_student(student_id):
 
 # ==================== TEACHER MANAGEMENT ====================
 
-@app.route('/api/v1/teachers', methods=['GET'])
-@jwt_required()
-def get_teachers():
-    teachers = Teacher.query.filter_by(is_active=True).all()
-    return jsonify([t.to_dict() for t in teachers]), 200
+# @app.route('/api/v1/teachers', methods=['GET'])
+# @jwt_required()
+# def get_teachers():
+#     teachers = Teacher.query.filter_by(is_active=True).all()
+#     return jsonify([t.to_dict() for t in teachers]), 200
 
-@app.route('/api/v1/teachers', methods=['POST'])
-@role_required(['developer', 'principal'])
-def create_teacher():
-    data = request.get_json()
+# @app.route('/api/v1/teachers', methods=['POST'])
+# @role_required(['developer', 'principal'])
+# def create_teacher():
+#     data = request.get_json()
     
-    if not data.get('staff_id') or not data.get('full_name'):
-        return jsonify({'error': 'Staff ID and full name are required'}), 400
+#     if not data.get('staff_id') or not data.get('full_name'):
+#         return jsonify({'error': 'Staff ID and full name are required'}), 400
     
-    if Teacher.query.filter_by(staff_id=data['staff_id']).first():
-        return jsonify({'error': 'Staff ID already exists'}), 400
+#     if Teacher.query.filter_by(staff_id=data['staff_id']).first():
+#         return jsonify({'error': 'Staff ID already exists'}), 400
     
-    teacher = Teacher(
-        staff_id=data['staff_id'],
-        full_name=data['full_name'],
-        national_id=data.get('national_id'),
-        phone=data.get('phone'),
-        email=data.get('email'),
-        subjects=','.join(data['subjects']) if isinstance(data.get('subjects'), list) else data.get('subjects'),
-        classes_assigned=','.join(data['classes_assigned']) if isinstance(data.get('classes_assigned'), list) else data.get('classes_assigned'),
-        qualification=data.get('qualification')
-    )
+#     teacher = Teacher(
+#         staff_id=data['staff_id'],
+#         full_name=data['full_name'],
+#         national_id=data.get('national_id'),
+#         phone=data.get('phone'),
+#         email=data.get('email'),
+#         subjects=','.join(data['subjects']) if isinstance(data.get('subjects'), list) else data.get('subjects'),
+#         classes_assigned=','.join(data['classes_assigned']) if isinstance(data.get('classes_assigned'), list) else data.get('classes_assigned'),
+#         qualification=data.get('qualification')
+#     )
     
-    db.session.add(teacher)
-    db.session.commit()
+#     db.session.add(teacher)
+#     db.session.commit()
     
-    return jsonify(teacher.to_dict()), 201
+#     return jsonify(teacher.to_dict()), 201
 
 # ==================== FEE MANAGEMENT ====================
 
